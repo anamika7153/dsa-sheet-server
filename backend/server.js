@@ -16,7 +16,18 @@ const app = express();
 app.use(express.json());
 
 // Enable CORS
-app.use(cors());
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? [process.env.FRONTEND_URL, 'https://dsa-sheet-frontend.onrender.com']
+    : ['http://localhost:3000'],
+  credentials: true
+};
+app.use(cors(corsOptions));
+
+// Health check endpoint (for Render)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 // Route files
 const authRoutes = require('./routes/auth');
